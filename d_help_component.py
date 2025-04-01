@@ -1,5 +1,3 @@
-import csv
-import random
 from tkinter import *
 from functools import partial  # to prevent unwanted windows
 
@@ -35,10 +33,10 @@ class StartGame:
 
     def to_play(self, num_rounds):
         """
-        Invokes game GUI and takes across #  of roundsto be played
+        Invokes game GUI and takes across #  of rounds to be played
         """
         Play(num_rounds)
-        root.withdraw()
+        # root.withdraw()
 
 
 class Play:
@@ -63,61 +61,69 @@ class Play:
         self.hints_button.grid(row=1)
 
     def to_hints(self):
-        DisplayHelp(self)
+        DisplayHints(self)
 
 
-class DisplayHelp:
+class DisplayHints:
 
     def __init__(self, partner):
         # set up dialogue box and background colour
         background = "#ffe6cc"
         self.hints_box = Toplevel()
 
-        # disable help button
-        partner.to_hints_button.config(state=DISABLED)
+        # disable hints button
+        partner.hints_button.config(state=DISABLED)
 
-        # If users press the cross at the top, closes and 'releases' the help button
+        # If users press the cross at the top, closes and 'releases' the hints button
         self.hints_box.protocol('WM_DELETE_WINDOW',
-                                partial(self.close_help, partner)
+                                partial(self.close_hints, partner)
                                 )
 
-        self.help_frame = Frame(self.hints_box, width=300,
-                                height=200)
-        self.help_frame.grid()
+        self.hints_frame = Frame(self.hints_box, width=300,
+                                 height=200)
+        self.hints_frame.grid()
 
-        self.help_heading_label = Label(self.help_frame,
-                                        text="Help / Info",
-                                        font=("Arial", "14", "bold"))
-        self.help_heading_label.grid(row=0)
+        self.hints_heading_label = Label(self.hints_frame,
+                                         text="Hints",
+                                         font=("Arial", "16", "bold"))
+        self.hints_heading_label.grid(row=0)
 
-        help_text = "hints are here"
+        hints_text = "The score for each colour relates to it;s hexadecimal code.\n\n" \
+                     "Remember, the hex code foe white id #FFFFFF - which is the best\n" \
+                     " possible score.\n\n" \
+                     "The hex code for black is #000000 which is the worst possible\n score" \
+                     "\n\nThe first colour in the code is red, so if you had to choose\n" \
+                     " between red (#FF0000), green (#00FF00), and blue (#0000FF), then\n " \
+                     "red would be the best choice.\n\n" \
+                     "GOOD LUCK!\n"
 
-        self.help_text_label = Label(self.help_frame,
-                                     text=help_text,
-                                     wraplength=350,
-                                     justify="left")
-        self.help_text_label.grid(row=1, padx=10)
+        self.hints_text_label = Label(self.hints_frame,
+                                      text=hints_text,
+                                      wraplength=350,
+                                      justify="left",
+                                      font=("Arial", "10"))
+        self.hints_text_label.grid(row=1, padx=10)
 
-        self.dismiss_button = Button(self.help_frame,
+        self.dismiss_button = Button(self.hints_frame,
                                      font=("Arial", "12", "bold"),
                                      text="Dismiss", bg="#CC6600",
-                                     fg="#FFFFFF", command=partial(self.close_help, partner)
+                                     fg="#FFFFFF", command=partial(self.close_hints, partner)
                                      )
         self.dismiss_button.grid(row=2, padx=10, pady=10)
 
         # List and loop to set up background colour on everything except the buttons
-        recolour_list = [self.help_frame, self.help_heading_label,
-                         self.help_text_label]
+        recolour_list = [self.hints_frame, self.hints_heading_label,
+                         self.hints_text_label]
 
         for item in recolour_list:
             item.config(bg=background)
 
-    def close_help(self, partner):
+    def close_hints(self, partner):
         """
-        Closes help dialogue box and enables help button
+        Closes hints dialogue box and enables hints button
         """
-        # Put help button back to normal
-        partner.to_hints_button.config(state=NORMAL)
+        # Put hints button back to normal
+        partner.hints_button.config(state=NORMAL)
         self.hints_box.destroy()
 
 
