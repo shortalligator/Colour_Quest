@@ -43,8 +43,9 @@ def get_round_colours():
 
     median = (int_scores[1] + int_scores[2] / 2)
     median = int(round_ans(median))
+    highest = int_scores[-1]
 
-    return round_colours, median
+    return round_colours, median, highest
 
 
 def round_ans(val):
@@ -170,7 +171,7 @@ class Play:
         # colour list and score lists
         self.round_colour_list = []
         self.all_scores_list = []
-        self.all_medians_list = []
+        self.all_high_score_list = []
 
         self.play_box = Toplevel()
 
@@ -260,10 +261,13 @@ class Play:
         self.rounds_played.set(rounds_played)
 
         rounds_wanted = self.rounds_wanted.get()
-        self.round_colour_list, median = get_round_colours()
+        self.round_colour_list, median, highest = get_round_colours()
 
         # set target score as median (for later comparison)
         self.target_score.set(median)
+
+        # add median and high score to lists for stats
+        self.all_high_score_list.append(highest)
 
         # update heading and score to beat labels. hide result label
         self.heading_label.config(text=f"{rounds_played} of {rounds_wanted}")
@@ -295,7 +299,7 @@ class Play:
         colour_name = self.colour_button_ref[user_choice].cget('text')
 
         target = self.target_score.get()
-        self.all_medians_list.append(target)
+        # self.all_medians_list.append(target)
 
         if score >= target:
             result_text = f"Success! {colour_name} earned you {score} points."
@@ -307,6 +311,9 @@ class Play:
             self.all_scores_list.append(0)
 
         self.results_label.config(text=result_text, bg=result_bg)
+
+        print("all scores", self.all_scores_list)
+        print("highest score", self.all_high_score_list)
 
         # enable stats & next buttons, disable colour buttons
         self.next_button.config(state=NORMAL)
@@ -341,7 +348,7 @@ class DisplayHints:
         self.hints_box = Toplevel()
 
         # disable hints button
-        partner.hints_button.config(state=DISABLED)
+        partner.stats_button.config(state=DISABLED)
 
         # If users press the cross at the top, closes and 'releases' the hints button
         self.hints_box.protocol('WM_DELETE_WINDOW',
@@ -392,7 +399,7 @@ class DisplayHints:
         Closes hints dialogue box and enables hints button
         """
         # Put hints button back to normal
-        partner.hints_button.config(state=NORMAL)
+        partner.stats_button.config(state=NORMAL)
         self.hints_box.destroy()
 
 

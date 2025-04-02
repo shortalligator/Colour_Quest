@@ -54,77 +54,71 @@ class Play:
                                    pady=5, padx=5)
         self.heading_label.grid(row=0)
 
-        # create hints button
-        self.hints_button = Button(self.game_frame, font=("Arial", "16", "bold"),
-                                   fg="#FFFFFF", bg="#FF8000", text="Hints",
-                                   width=10, command=self.to_hints)
-        self.hints_button.grid(row=1)
+        # create stats button
+        self.stats_button = Button(self.game_frame, font=("Arial", "16", "bold"),
+                                   fg="#FFFFFF", bg="#FF8000", text="Stats",
+                                   width=10, command=self.to_stats)
+        self.stats_button.grid(row=1)
 
-    def to_hints(self):
-        DisplayHints(self)
+    def to_stats(self):
+        DisplayStatistics(self)
 
 
-class DisplayHints:
+class DisplayStatistics:
 
     def __init__(self, partner):
         # set up dialogue box and background colour
         background = "#ffe6cc"
-        self.hints_box = Toplevel()
+        self.stats_box = Toplevel()
 
-        # disable hints button
+        # disable stats button
         partner.stats_button.config(state=DISABLED)
 
-        # If users press the cross at the top, closes and 'releases' the hints button
-        self.hints_box.protocol('WM_DELETE_WINDOW',
-                                partial(self.close_hints, partner)
+        # If users press the cross at the top, closes and 'releases' the stats button
+        self.stats_box.protocol('WM_DELETE_WINDOW',
+                                partial(self.close_stats, partner)
                                 )
 
-        self.hints_frame = Frame(self.hints_box, width=300,
+        self.stats_frame = Frame(self.stats_box, width=300,
                                  height=200)
-        self.hints_frame.grid()
+        self.stats_frame.grid()
 
-        self.hints_heading_label = Label(self.hints_frame,
-                                         text="Hints",
+        self.stats_heading_label = Label(self.stats_frame,
+                                         text="Stats",
                                          font=("Arial", "16", "bold"))
-        self.hints_heading_label.grid(row=0)
+        self.stats_heading_label.grid(row=0)
 
-        hints_text = "The score for each colour relates to it;s hexadecimal code.\n\n" \
-                     "Remember, the hex code foe white id #FFFFFF - which is the best\n" \
-                     " possible score.\n\n" \
-                     "The hex code for black is #000000 which is the worst possible\n score" \
-                     "\n\nThe first colour in the code is red, so if you had to choose\n" \
-                     " between red (#FF0000), green (#00FF00), and blue (#0000FF), then\n " \
-                     "red would be the best choice.\n\n" \
-                     "GOOD LUCK!\n"
+        stats_text = "idk if i need this"
 
-        self.hints_text_label = Label(self.hints_frame,
-                                      text=hints_text,
+        self.stats_text_label = Label(self.stats_frame,
+                                      text=stats_text,
                                       wraplength=350,
                                       justify="left",
                                       font=("Arial", "10"))
-        self.hints_text_label.grid(row=1, padx=10)
+        self.stats_text_label.grid(row=1, padx=10)
 
-        self.dismiss_button = Button(self.hints_frame,
+        self.dismiss_button = Button(self.stats_frame,
                                      font=("Arial", "12", "bold"),
                                      text="Dismiss", bg="#CC6600",
-                                     fg="#FFFFFF", command=partial(self.close_hints, partner)
+                                     fg="#FFFFFF", command=partial(self.close_stats, partner)
                                      )
         self.dismiss_button.grid(row=2, padx=10, pady=10)
 
         # List and loop to set up background colour on everything except the buttons
-        recolour_list = [self.hints_frame, self.hints_heading_label,
-                         self.hints_text_label]
+        recolour_list = [self.stats_frame, self.stats_heading_label,
+                         self.stats_text_label]
 
         for item in recolour_list:
             item.config(bg=background)
 
-    def close_hints(self, partner):
+    def close_stats(self, partner):
         """
-        Closes hints dialogue box and enables hints button
+        Closes stats dialogue box and enables stats button
         """
-        # Put hints button back to normal
+        # Put stats
+        # button back to normal
         partner.stats_button.config(state=NORMAL)
-        self.hints_box.destroy()
+        self.stats_box.destroy()
 
 
 # main routine
