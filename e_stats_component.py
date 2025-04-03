@@ -45,6 +45,23 @@ class Play:
     """
 
     def __init__(self, how_many):
+        self.rounds_won = IntVar()
+
+        # highest score test data
+        self.all_scores_list = [20, 20, 20, 16, 19]
+        self.all_high_score_list = [20, 20, 20, 16, 19]
+        self.rounds_won.set(5)
+
+        # # Lowest score test data
+        # self.all_scores_list = [0, 0, 0, 0, 0]
+        # self.all_high_score_list = [20, 20, 20, 16, 19]
+        # self.rounds_won.set(0)
+        #
+        # # random score test data
+        # self.all_scores_list = [0, 15, 16, 0, 16]
+        # self.all_high_score_list = [20, 19, 18, 20, 20]
+        # self.rounds_won.set(0)
+
         self.play_box = Toplevel()
 
         self.game_frame = Frame(self.play_box)
@@ -61,14 +78,31 @@ class Play:
         self.stats_button.grid(row=1)
 
     def to_stats(self):
-        DisplayStatistics(self)
+        """
+        Retrieves everything we need to display the game / round statistics
+        """
+
+        # IMPORTANT: retrieve number of rounds won
+        # as a number (rather than the 'self' container)
+        rounds_won = self.rounds_won.get()
+        stats_bundle = [rounds_won, self.all_high_score_list,
+                        self.all_high_score_list]
+        DisplayStatistics(self, stats_bundle)
 
 
 class DisplayStatistics:
 
-    def __init__(self, partner):
-        # set up dialogue box and background colour
-        background = "#ffe6cc"
+    def __init__(self, partner, all_stats_info):
+
+        # Extract information from master list
+        rounds_won = all_stats_info[0]
+        user_score = all_stats_info[1]
+        high_scores = all_stats_info[2]
+
+        # sort user scores to find high score
+        user_score.sort()
+
+        # set up dialogue box
         self.stats_box = Toplevel()
 
         # disable stats button
@@ -76,12 +110,53 @@ class DisplayStatistics:
 
         # If users press the cross at the top, closes and 'releases' the stats button
         self.stats_box.protocol('WM_DELETE_WINDOW',
-                                partial(self.close_stats, partner)
-                                )
+                                partial(self.close_stats, partner))
 
-        self.stats_frame = Frame(self.stats_box, width=300,
-                                 height=200)
+        self.stats_frame = Frame(self.stats_box, width=300, height=200)
         self.stats_frame.grid()
+
+        # Math to populate Stats dialogue
+        rounds_played = len(user_score)
+
+        success_rate = rounds_won / rounds_played * 100
+        total_score = sum(user_score)
+        max_possible = sum(high_scores)
+
+        best_score = user_score[-1]
+        average_score = total_score / rounds_played
+
+        # strings for stats label
+        success_string = (f"Success Rate: {rounds_won} / {rounds_played}"
+                          f"({success_rate:.0f}%)")
+        total_score_string = f"Total score: {total_score}"
+        max_possible_string = f"Maximum possible score: {max_possible}"
+        best_score_string = f"Best score: {best_score}"
+
+        # custom comments text and formatting
+        if total_score == max_possible:
+            comment_string = "Amazing! You got the highest possible score"
+            comment_colour = "#D5E8D4"
+
+        elif total_score == 0:
+            comment_string = "Yikes - You have every single round\n" \
+                             "You might want to look at the hints."
+            comment_colour = "#F8CECC"
+            best_score_string = f"Best score: n/a"
+
+        else:
+            comment_string = ""
+            comment_colour = "#F0F0F0"
+
+        average_score_string = f"Average SCore: {average_score:.0f}\n"
+
+        heading_font = ("Arial", "16", "bold")
+        normal_font = ("Arial", "14")
+        comment_font = ("Arial", "13")
+
+        # Label list (text colour | font | Sticky)
+        all_stats_string = [
+            
+        ]
 
         self.stats_heading_label = Label(self.stats_frame,
                                          text="Stats",
@@ -109,14 +184,13 @@ class DisplayStatistics:
                          self.stats_text_label]
 
         for item in recolour_list:
-            item.config(bg=background)
+            item.config(bg="#ffe6cc")
 
     def close_stats(self, partner):
         """
         Closes stats dialogue box and enables stats button
         """
-        # Put stats
-        # button back to normal
+        # Put stats button back to normal
         partner.stats_button.config(state=NORMAL)
         self.stats_box.destroy()
 
